@@ -25,13 +25,24 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    const brands = client.db('tech-hunt').collection('brands'); 
+    const brands = client.db('tech-hunt').collection('brands');
+    const productCollection = client.db('tech-hunt').collection('productCollection');
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    app.get('/brands', async(req, res) => {
+    app.get('/brands', async (req, res) => {
       const cursor = brands.find();
       const result = await cursor.toArray();
       res.send(result);
     });
+    app.post('/products', async (req, res) => {
+      const newProduct = req.body;
+      const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+    });
+    app.get('/products', async(req, res) => {
+      const cursor = productCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -40,9 +51,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send("You are now in the home directory of the tech-hunt server!");
+  res.send("You are now in the home directory of the tech-hunt server!");
 })
 
 app.listen(port, () => {
-    console.log(`Server is running at the port: ${port}`);
+  console.log(`Server is running at the port: ${port}`);
 })
