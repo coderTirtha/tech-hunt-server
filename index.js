@@ -43,6 +43,13 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    app.get('/products/:name', async(req, res) => {
+      const name = req.params.name;
+      const query = {brand : `${name.charAt(0).toUpperCase()}${name.slice(1, name.length)}`}
+      const cursor = productCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
